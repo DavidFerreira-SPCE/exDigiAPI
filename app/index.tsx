@@ -22,14 +22,17 @@ export default function RandomMon() {
   }, [error]);
 
 return (
-  <View style={styles.container}>
-        <View>
-    <Text>Seja Bem-vindo ao buscador de Digimons</Text>
-      </View>
-    <Image
-      source={require("../assets/images/logo.png")}
-      style={styles.logo}
-    />
+  <View style={styles.body}>
+    <View style={styles.container}>
+      <Text>Seja Bem-vindo ao buscador de Digimons</Text>
+    </View>
+    
+    <View style={styles.container}>
+      <Image
+        source={require("../assets/images/logo.png")}
+        style={styles.logo}
+      />
+    </View>
   </View>
-);
-}
+)
+};

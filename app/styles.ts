@@ -1,12 +1,16 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: 'purple',
-        justifyContent: "center",
-        alignItems: "center",
-    },
-
+  body: {
+    flex: 1,
+    backgroundColor: '#1a1a2e',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  container: {
+    marginVertical: 10,
+  },
     logo:{
         marginTop: 100,
         marginRight: 200,
