@@ -26,10 +26,10 @@ const Styles = StyleSheet.create({
     borderRadius: 15,
   },
   texto: {
-    fontSize: 14,
+    fontSize: 18,
     textAlign: 'center',
     marginBottom: 20,
-    color: '#333',
+    color: '#fffb00ff',
   },
   input: {
     borderWidth: 1,
@@ -67,6 +67,7 @@ const Styles = StyleSheet.create({
     marginBottom: 15,
   },
   digimonImage: {
+    borderRadius: 12,
     width: 180,
     height: 180,
     marginVertical: 20,
@@ -93,8 +94,7 @@ const Styles = StyleSheet.create({
       initialListContainer: {
         marginTop: 18,
         width: '100%',
-        gap: 15,
-        paddingHorizontal: 5,
+        
     },
     listTitle: {
         fontSize: 18,
@@ -104,20 +104,23 @@ const Styles = StyleSheet.create({
         color: '#f7f7f7ff', // Cor clara para contraste
     },
     digimonGrid: {
-        justifyContent: 'space-evenly',
-        rowGap:10,
+        marginLeft:'auto',
         gap: 20,
+        gridRowGap: '30',
+        alignContent:'space-evenly',
+        justifyContent: 'center',
         paddingBottom: 10,
         borderRadius: 32
     },
     digimonCard: {
-        width: '48%', 
+        marginLeft: 7,
+        marginRight: 26,
+        width: '40%',
         alignItems: 'center',
-        padding: 10,
+        padding: 15,
         backgroundColor: '#fff',
         borderRadius: 10,
-        marginBottom: 10,
-        elevation: 2,
+        marginBottom: 6,
     },
     smallDigimonImage: {
         width: 60,

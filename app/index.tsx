@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { Image } from 'expo-image';
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Styles from './styles';
 
 export default function RandomDigimon() {
@@ -23,7 +24,6 @@ export default function RandomDigimon() {
 
     try {
       const response = await axios.get(`https://digi-api.com/api/v1/digimon?page=0&pageSize=5`);
-
       if (response.data.content && response.data.content.length > 0) {
         setInitialDigimons(response.data.content);
         setTotalPages(response.data.pageable.totalPages);
@@ -97,7 +97,7 @@ export default function RandomDigimon() {
   );
 
 
-  const seeMoreDigimon = async () => {
+const seeMoreDigimon = async () => {
   if (loading || currentPage >= totalPages - 1) {
     setError('Não há mais Digimons para carregar.');
     return;
@@ -110,24 +110,14 @@ export default function RandomDigimon() {
   try {
     const response = await axios.get(`https://digi-api.com/api/v1/digimon?page=${nextPage}&pageSize=5`);
     if (response.data.content && response.data.content.length > 0) {
-      setInitialDigimons(prevDigimons => {
-        const newDigimons = [...prevDigimons, ...response.data.content];
-        
-        // Faz o scroll após a atualização do estado
-        setTimeout(() => {
-          if (flatListRef.current && newDigimons.length > prevDigimons.length) {
-            flatListRef.current.scrollToIndex({
-              index: prevDigimons.length,
-              animated: true,
-              viewPosition: 0,
-            });
-          }
-        }, 300);
-        
-        return newDigimons;
-      });
-      
+      setInitialDigimons(prevDigimons => [...prevDigimons, ...response.data.content]);
       setCurrentPage(response.data.pageable.currentPage);
+
+      // Scroll suave para o final da lista após renderização
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+
     } else {
       setError('Não há mais Digimons para carregar.');
       setCurrentPage(totalPages - 1);
@@ -139,8 +129,10 @@ export default function RandomDigimon() {
     setLoading(false);
   }
 };
+
   return (
-    <View style={Styles.body}>
+    <SafeAreaView  style={Styles.body}>
+    <ScrollView>
       <View style={Styles.container}>
         <Image
           source={require("../assets/images/logo.png")}
@@ -232,6 +224,7 @@ export default function RandomDigimon() {
           </>
         )}
       </View>
-    </View>
+    </ScrollView>
+    </SafeAreaView>
   )
 };
