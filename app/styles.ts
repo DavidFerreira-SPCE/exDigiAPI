@@ -5,7 +5,7 @@ const Styles = StyleSheet.create({
     height: 'auto',
     width: 'auto',
     flex: 1,
-    backgroundColor: '#5c0496ff',
+    backgroundColor: '#4c077aff',
     padding: 20,
   },
   container: {
@@ -29,15 +29,16 @@ const Styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     marginBottom: 20,
-    color: '#fffb00ff',
+    color: '#dfd8d2ff',
   },
   input: {
+    textAlign: 'center',
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#3a3a3ad0',
     padding: 15,
     borderRadius: 10,
-    fontSize: 11,
-    backgroundColor: '#fafafa',
+    fontSize: 12,
+    backgroundColor: '#979797ff',
   },
   button: {
     backgroundColor: '#be9709ff',
@@ -144,7 +145,7 @@ const Styles = StyleSheet.create({
     },
 
     seeMore:{
-        backgroundColor: '#ff0000ff',
+        backgroundColor: '#9433e4b4',
         padding: 15,
         borderRadius: 8,
         alignItems: 'center',
