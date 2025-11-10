@@ -10,12 +10,13 @@ const Styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
-    marginTop: -36,
+    marginTop: -6,
   },
   logo: {
     resizeMode:'contain',
-    width: 120,
-    height: 80,
+    width: 70,
+    height: 60,
+    marginTop: 'auto',
     marginRight: 'auto'
   },
   bloco: {
@@ -25,7 +26,7 @@ const Styles = StyleSheet.create({
     borderRadius: 15,
   },
   texto: {
-    fontSize: 18,
+    fontSize: 14,
     textAlign: 'center',
     marginBottom: 20,
     color: '#333',
@@ -46,7 +47,7 @@ const Styles = StyleSheet.create({
     marginTop: 15,
   },
   buttonText: {
-    color: '#fff',
+    color: '#ddd9d9ff',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -56,7 +57,7 @@ const Styles = StyleSheet.create({
     textAlign: 'center',
   },
   resultContainer: {
-    marginTop: 30,
+    marginTop: -5,
     alignItems: 'center',
   },
   digimonName: {
@@ -72,10 +73,11 @@ const Styles = StyleSheet.create({
   },
   infoContainer: {
     backgroundColor: '#f5f5f5',
-    padding: 20,
-    borderRadius: 10,
+    paddingBottom: 20,
+    paddingHorizontal: 10,
+    borderRadius: 24,
     width: '100%',
-    marginTop: 10,
+    marginTop: -5,
   },
   infoLabel: {
     fontSize: 16,
@@ -84,13 +86,14 @@ const Styles = StyleSheet.create({
     marginTop: 10,
   },
   infoText: {
-    fontSize: 16,
+    fontSize: 12,
     color: '#333',
     fontWeight: 'normal',
   },
-initialListContainer: {
-        marginTop: 25,
+      initialListContainer: {
+        marginTop: 18,
         width: '100%',
+        gap: 15,
         paddingHorizontal: 5,
     },
     listTitle: {
@@ -101,18 +104,20 @@ initialListContainer: {
         color: '#f7f7f7ff', // Cor clara para contraste
     },
     digimonGrid: {
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
+        rowGap:10,
+        gap: 20,
         paddingBottom: 10,
-        borderRadius: 16
+        borderRadius: 32
     },
     digimonCard: {
-        width: '48%', // Garante 2 colunas com espaço entre elas
+        width: '48%', 
         alignItems: 'center',
         padding: 10,
         backgroundColor: '#fff',
         borderRadius: 10,
         marginBottom: 10,
-        elevation: 2, // Sombra suave
+        elevation: 2,
     },
     smallDigimonImage: {
         width: 60,
@@ -128,12 +133,22 @@ initialListContainer: {
     moreButton: {
         backgroundColor: '#0400ffff',
         padding: 15,
-        borderRadius: 6,
+        borderRadius: 8,
         alignItems: 'center',
-        marginTop: -10,
-        marginBottom: 30,
+        marginTop: 10,
+        marginBottom: 0,
         width: '100%',
     },
+
+    seeMore:{
+        backgroundColor: '#ff0000ff',
+        padding: 15,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 10,
+        marginBottom: 0,
+        width: '100%',
+    }
 });
 
 export default Styles;

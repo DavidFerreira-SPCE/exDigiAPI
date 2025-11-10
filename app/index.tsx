@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Image } from 'expo-image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Styles from './styles';
 
@@ -10,18 +10,24 @@ export default function RandomDigimon() {
   const [initialDigimons, setInitialDigimons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const flatListRef = useRef(null);
 
-  // --- FUNÇÕES DE BUSCA ---
   const fetchInitialPage = async () => {
     setLoading(true);
     setError('');
-    setDigimonData(null); // Limpa o result
+    setDigimonData(null);
+    setCurrentPage(0);
+    setTotalPages(0);
 
     try {
       const response = await axios.get(`https://digi-api.com/api/v1/digimon?page=0&pageSize=5`);
 
       if (response.data.content && response.data.content.length > 0) {
         setInitialDigimons(response.data.content);
+        setTotalPages(response.data.pageable.totalPages);
+        setCurrentPage(response.data.pageable.currentPage);
       } else {
         setInitialDigimons([]);
       }
@@ -38,8 +44,6 @@ export default function RandomDigimon() {
     fetchInitialPage();
   }, []);
 
-
-  // 2. Função de Reset
   const resetToInitialList = () => {
     setDigimonData(null);
     setSearchTerm('');
@@ -58,7 +62,6 @@ export default function RandomDigimon() {
       return;
     }
 
-    // Limpa a lista inicial e estados
     setInitialDigimons([]);
     setLoading(true);
     setError('');
@@ -67,9 +70,7 @@ export default function RandomDigimon() {
     try {
       const response = await axios.get(`https://digi-api.com/api/v1/digimon/${term.toLowerCase()}`);
       setDigimonData(response.data);
-
       setSearchTerm(term);
-
     } catch (err) {
       console.error('Erro na busca:', err);
       setError('Digimon não encontrado. Tente outro nome ou número.');
@@ -96,9 +97,50 @@ export default function RandomDigimon() {
   );
 
 
+  const seeMoreDigimon = async () => {
+  if (loading || currentPage >= totalPages - 1) {
+    setError('Não há mais Digimons para carregar.');
+    return;
+  }
+  
+  const nextPage = currentPage + 1;
+  setLoading(true);
+  setError('');
+
+  try {
+    const response = await axios.get(`https://digi-api.com/api/v1/digimon?page=${nextPage}&pageSize=5`);
+    if (response.data.content && response.data.content.length > 0) {
+      setInitialDigimons(prevDigimons => {
+        const newDigimons = [...prevDigimons, ...response.data.content];
+        
+        // Faz o scroll após a atualização do estado
+        setTimeout(() => {
+          if (flatListRef.current && newDigimons.length > prevDigimons.length) {
+            flatListRef.current.scrollToIndex({
+              index: prevDigimons.length,
+              animated: true,
+              viewPosition: 0,
+            });
+          }
+        }, 300);
+        
+        return newDigimons;
+      });
+      
+      setCurrentPage(response.data.pageable.currentPage);
+    } else {
+      setError('Não há mais Digimons para carregar.');
+      setCurrentPage(totalPages - 1);
+    }
+  } catch (err) {
+    console.error('Erro ao carregar mais Digimons:', err);
+    setError('Falha ao carregar mais Digimons.');
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <View style={Styles.body}>
-      {/* ... Container e Logo ... */}
       <View style={Styles.container}>
         <Image
           source={require("../assets/images/logo.png")}
@@ -107,8 +149,8 @@ export default function RandomDigimon() {
       </View>
 
       <View style={Styles.bloco}>
-
         <Text style={Styles.texto}>Seja Bem-vindo a busca de Digimons</Text>
+
         <TextInput
           style={Styles.input}
           placeholder='Digite o nome ou número do Digimon'
@@ -116,13 +158,14 @@ export default function RandomDigimon() {
           onChangeText={setSearchTerm}
           onSubmitEditing={() => searchDigimon()}
         />
+
         <TouchableOpacity
           style={Styles.button}
           onPress={() => searchDigimon()}
           disabled={loading}
         >
           <Text style={Styles.buttonText}>
-            {loading ? 'Buscando...' : 'Buscar'}
+            {loading && !digimonData ? 'Buscando...' : 'Buscar'}
           </Text>
         </TouchableOpacity>
 
@@ -133,42 +176,53 @@ export default function RandomDigimon() {
           <View style={Styles.initialListContainer}>
             <Text style={Styles.listTitle}>Primeiros Digimons Carregados:</Text>
             <FlatList
+              ref={flatListRef}
               data={initialDigimons}
               renderItem={renderDigimonItem}
               keyExtractor={item => String(item.id)}
               numColumns={2}
               contentContainerStyle={Styles.digimonGrid}
-              scrollEnabled={false}
+              scrollEnabled={true}
             />
+
+            {currentPage < totalPages - 1 && (
+              <View>
+                <TouchableOpacity
+                  style={Styles.seeMore}
+                  onPress={seeMoreDigimon}
+                  disabled={loading}
+                >
+                  <Text style={Styles.buttonText}>Ver Mais</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         )}
 
-        {/* Resultado da Busca Individual */}
         {digimonData && (
           <>
             <View style={Styles.resultContainer}>
-              <Text style={Styles.digimonName}>{digimonData.name}</Text>
+              <Text style={Styles.digimonName}>{digimonData?.name}</Text>
 
               <Image
-                source={{ uri: digimonData.images?.[0]?.href }}
+                source={{ uri: digimonData?.images?.[0]?.href }}
                 style={Styles.digimonImage}
                 contentFit="contain"
               />
-
-              <View style={Styles.infoContainer}>
-                <Text style={Styles.infoLabel}>Nível:
-                  <Text style={Styles.infoText}> {digimonData.levels?.[0]?.level || 'N/A'}</Text>
-                </Text>
-                <Text style={Styles.infoLabel}>Tipo:
-                  <Text style={Styles.infoText}> {digimonData.types?.[0]?.type || 'N/A'}</Text>
-                </Text>
-                <Text style={Styles.infoLabel}>Atributo:
-                  <Text style={Styles.infoText}> {digimonData.attributes?.[0]?.attribute || 'N/A'}</Text>
-                </Text>
-              </View>
             </View>
 
-            {/* 5. Botão de Reset (SÓ aparece se houver digimonData) */}
+            <View style={Styles.infoContainer}>
+              <Text style={Styles.infoLabel}>Nível:</Text>
+              <Text style={Styles.infoText}>{digimonData?.levels?.[0]?.level || 'N/A'}</Text>
+
+
+              <Text style={Styles.infoLabel}>Tipo:</Text>
+              <Text style={Styles.infoText}>{digimonData?.types?.[0]?.type || 'N/A'}</Text>
+
+              <Text style={Styles.infoLabel}>Atributo:</Text>
+              <Text style={Styles.infoText}>{digimonData?.attributes?.[0]?.attribute || 'N/A'}</Text>
+            </View>
+
             <TouchableOpacity
               style={Styles.moreButton}
               onPress={resetToInitialList}
@@ -179,5 +233,5 @@ export default function RandomDigimon() {
         )}
       </View>
     </View>
-  );
-}
+  )
+};
