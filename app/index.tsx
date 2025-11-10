@@ -38,14 +38,20 @@ export default function RandomDigimon() {
     fetchInitialPage();
   }, []);
 
-  const searchDigimon = async (namefromclick) => {
-    
-    // 1. DETERMINAÇÃO DO TERMO: Se 'namefromclick' não existir, usa o input.
-    // Garante que é uma string, mesmo que vazia.
-    const inputTerm = (searchTerm || '').trim();
+
+  // 2. Função de Reset
+const resetToInitialList = () => {
+    setDigimonData(null);
+    setSearchTerm('');
+    setError('');
+    setLoading(true);
+    fetchInitialPage(); 
+};
+
+const searchDigimon = async (nameFromClick?: string) => {
+    const inputTerm = (nameFromClick || searchTerm || '').trim();
     const term = inputTerm;
     
-    // 2. CONDIÇÃO DE ERRO REFORÇADA: Verifica se o termo final está vazio
     if (!term) {
         setError('Por favor, digite ou selecione um Digimon para buscar.');
         setDigimonData(null);
@@ -59,13 +65,10 @@ export default function RandomDigimon() {
     setDigimonData(null); 
 
     try {
-        // 3. APLICA toLowerCase ao termo FINAL (que agora sabemos que é válido)
         const response = await axios.get(`https://digi-api.com/api/v1/digimon/${term.toLowerCase()}`);
         setDigimonData(response.data);
         
-        if (namefromclick) {
-            setSearchTerm(term);
-        }
+        setSearchTerm(term);
         
     } catch (err) {
         console.error('Erro na busca:', err);
@@ -76,17 +79,7 @@ export default function RandomDigimon() {
     }
 };
 
-  // 2. Função de Reset
-const resetToInitialList = () => {
-    setDigimonData(null); 
-    setSearchTerm('');
-    setError('');       
-    setLoading(true);
-    fetchInitialPage(); 
-};
-
-
-const renderDigimonItem = ({ item }) => (
+const renderDigimonItem = ({ item }: { item: any }) => (
     <TouchableOpacity 
         key={item.id} 
         style={Styles.digimonCard}
@@ -94,7 +87,6 @@ const renderDigimonItem = ({ item }) => (
         disabled={loading}
     >
         <Image
-            // Usa a URL da imagem do item
             source={{ uri: item.image }}
             style={Styles.smallDigimonImage}
             contentFit="contain"
@@ -102,7 +94,7 @@ const renderDigimonItem = ({ item }) => (
         <Text style={Styles.smallDigimonName}>{item.name}</Text>
     </TouchableOpacity>
 );
-  // --- RENDERIZAÇÃO (JSX) ---
+
 
   return (
     <View style={Styles.body}>
@@ -134,12 +126,9 @@ const renderDigimonItem = ({ item }) => (
           </Text>
         </TouchableOpacity>
 
-
         {loading && <ActivityIndicator size="large" color="#FF6B35" style={{ marginTop: 20 }} />}
-
         {error && <Text style={Styles.errorText}>{error}</Text>}
 
-        {/* 3. Lista dos 5 Digimons Iniciais: Só aparece se não houver erro e resultado individual */}
         {!error && !digimonData && initialDigimons.length > 0 && (
           <View style={Styles.initialListContainer}>
             <Text style={Styles.listTitle}>Primeiros Digimons Carregados:</Text>
@@ -154,9 +143,9 @@ const renderDigimonItem = ({ item }) => (
           </View>
         )}
 
-        {/* 4. Resultado da Busca Individual */}
+        {/* Resultado da Busca Individual */}
         {digimonData && (
-          <> {/* Fragmento para agrupar o resultado e o botão */}
+          <>
             <View style={Styles.resultContainer}>
               <Text style={Styles.digimonName}>{digimonData.name}</Text>
 
