@@ -40,60 +40,60 @@ export default function RandomDigimon() {
 
 
   // 2. Função de Reset
-const resetToInitialList = () => {
+  const resetToInitialList = () => {
     setDigimonData(null);
     setSearchTerm('');
     setError('');
     setLoading(true);
-    fetchInitialPage(); 
-};
+    fetchInitialPage();
+  };
 
-const searchDigimon = async (nameFromClick?: string) => {
+  const searchDigimon = async (nameFromClick?: string) => {
     const inputTerm = (nameFromClick || searchTerm || '').trim();
     const term = inputTerm;
-    
+
     if (!term) {
-        setError('Por favor, digite ou selecione um Digimon para buscar.');
-        setDigimonData(null);
-        return;
+      setError('Por favor, digite ou selecione um Digimon para buscar.');
+      setDigimonData(null);
+      return;
     }
 
     // Limpa a lista inicial e estados
-    setInitialDigimons([]); 
-    setLoading(true); 
-    setError(''); 
-    setDigimonData(null); 
+    setInitialDigimons([]);
+    setLoading(true);
+    setError('');
+    setDigimonData(null);
 
     try {
-        const response = await axios.get(`https://digi-api.com/api/v1/digimon/${term.toLowerCase()}`);
-        setDigimonData(response.data);
-        
-        setSearchTerm(term);
-        
-    } catch (err) {
-        console.error('Erro na busca:', err);
-        setError('Digimon não encontrado. Tente outro nome ou número.');
-        setDigimonData(null);
-    } finally {
-        setLoading(false);
-    }
-};
+      const response = await axios.get(`https://digi-api.com/api/v1/digimon/${term.toLowerCase()}`);
+      setDigimonData(response.data);
 
-const renderDigimonItem = ({ item }: { item: any }) => (
-    <TouchableOpacity 
-        key={item.id} 
-        style={Styles.digimonCard}
-        onPress={() => searchDigimon(item.name)} 
-        disabled={loading}
+      setSearchTerm(term);
+
+    } catch (err) {
+      console.error('Erro na busca:', err);
+      setError('Digimon não encontrado. Tente outro nome ou número.');
+      setDigimonData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderDigimonItem = ({ item }: { item: any }) => (
+    <TouchableOpacity
+      key={item.id}
+      style={Styles.digimonCard}
+      onPress={() => searchDigimon(item.name)}
+      disabled={loading}
     >
-        <Image
-            source={{ uri: item.image }}
-            style={Styles.smallDigimonImage}
-            contentFit="contain"
-        />
-        <Text style={Styles.smallDigimonName}>{item.name}</Text>
+      <Image
+        source={{ uri: item.image }}
+        style={Styles.smallDigimonImage}
+        contentFit="contain"
+      />
+      <Text style={Styles.smallDigimonName}>{item.name}</Text>
     </TouchableOpacity>
-);
+  );
 
 
   return (
@@ -114,11 +114,11 @@ const renderDigimonItem = ({ item }: { item: any }) => (
           placeholder='Digite o nome ou número do Digimon'
           value={searchTerm}
           onChangeText={setSearchTerm}
-          onSubmitEditing={searchDigimon}
+          onSubmitEditing={() => searchDigimon()}
         />
         <TouchableOpacity
           style={Styles.button}
-          onPress={searchDigimon}
+          onPress={() => searchDigimon()}
           disabled={loading}
         >
           <Text style={Styles.buttonText}>
