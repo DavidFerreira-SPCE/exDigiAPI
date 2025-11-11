@@ -5,7 +5,7 @@ import { ActivityIndicator, FlatList, ScrollView, Text, TextInput, TouchableOpac
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Styles from './styles';
 
-export default function RandomDigimon() {
+export default function SearchDigimon() {
   const [searchTerm, setSearchTerm] = useState('');
   const [digimonData, setDigimonData] = useState(null);
   const [initialDigimons, setInitialDigimons] = useState([]);
